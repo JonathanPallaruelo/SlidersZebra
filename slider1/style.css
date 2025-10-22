@@ -170,3 +170,151 @@ header .menu{
         top: 10%;
     }
 }
+
+/* ======== AÑADIDOS MÍNIMOS PARA MODO SIN JS ======== */
+
+/* 1) Mostrar el slide según radio activo (5 ítems) */
+#s1:checked ~ .list .item:nth-child(1),
+#s2:checked ~ .list .item:nth-child(2),
+#s3:checked ~ .list .item:nth-child(3),
+#s4:checked ~ .list .item:nth-child(4),
+#s5:checked ~ .list .item:nth-child(5){
+    opacity: 1 !important;
+    z-index: 10 !important;
+}
+
+/* 2) Overlays que convierten tus flechas en navegación CSS */
+.arrows .arrow-overlay{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    cursor: pointer;
+    display: none; /* se muestra según el radio activo */
+    z-index: 101;  /* por encima de tus botones */
+}
+.arrows .arrow-overlay.prev{ left: 0; }
+.arrows .arrow-overlay.next{ right: 0; }
+
+/* Mostrar sólo el par de overlays que corresponde a cada slide */
+#s1:checked ~ .arrows .a1{ display: block; }
+#s2:checked ~ .arrows .a2{ display: block; }
+#s3:checked ~ .arrows .a3{ display: block; }
+#s4:checked ~ .arrows .a4{ display: block; }
+#s5:checked ~ .arrows .a5{ display: block; }
+
+/* 3) Hacer clicables las miniaturas y resaltar la activa (imitando tu .active) */
+.thumbnail .item{ cursor: pointer; }
+#s1:checked ~ .thumbnail .item[for="s1"],
+#s2:checked ~ .thumbnail .item[for="s2"],
+#s3:checked ~ .thumbnail .item[for="s3"],
+#s4:checked ~ .thumbnail .item[for="s4"],
+#s5:checked ~ .thumbnail .item[for="s5"]{
+    filter: brightness(1.5) !important;
+}
+
+/* 4) Parche: neutraliza el .active original cuando hay radios activos
+      y aplica las animaciones al slide realmente seleccionado */
+.slider input[type="radio"]:checked ~ .list .item.active{
+  opacity: 0 !important;
+  z-index: 0 !important;
+}
+.slider input[type="radio"]:checked ~ .list .item.active p:nth-child(1),
+.slider input[type="radio"]:checked ~ .list .item.active h2,
+.slider input[type="radio"]:checked ~ .list .item.active p:nth-child(3){
+  animation: none !important;
+  transform: none !important;
+  filter: none !important;
+  opacity: 0 !important;
+}
+/* Animación en el slide seleccionado por radio */
+#s1:checked ~ .list .item:nth-child(1) p:nth-child(1),
+#s1:checked ~ .list .item:nth-child(1) h2,
+#s1:checked ~ .list .item:nth-child(1) p:nth-child(3),
+#s2:checked ~ .list .item:nth-child(2) p:nth-child(1),
+#s2:checked ~ .list .item:nth-child(2) h2,
+#s2:checked ~ .list .item:nth-child(2) p:nth-child(3),
+#s3:checked ~ .list .item:nth-child(3) p:nth-child(1),
+#s3:checked ~ .list .item:nth-child(3) h2,
+#s3:checked ~ .list .item:nth-child(3) p:nth-child(3),
+#s4:checked ~ .list .item:nth-child(4) p:nth-child(1),
+#s4:checked ~ .list .item:nth-child(4) h2,
+#s4:checked ~ .list .item:nth-child(4) p:nth-child(3),
+#s5:checked ~ .list .item:nth-child(5) p:nth-child(1),
+#s5:checked ~ .list .item:nth-child(5) h2,
+#s5:checked ~ .list .item:nth-child(5) p:nth-child(3){
+  transform: translateY(30px);
+  filter: blur(20px);
+  opacity: 0;
+  animation: showContent .5s .7s ease-in-out 1 forwards;
+}
+#s1:checked ~ .list .item:nth-child(1) h2,
+#s2:checked ~ .list .item:nth-child(2) h2,
+#s3:checked ~ .list .item:nth-child(3) h2,
+#s4:checked ~ .list .item:nth-child(4) h2,
+#s5:checked ~ .list .item:nth-child(5) h2{
+  animation-delay: 1s;
+}
+#s1:checked ~ .list .item:nth-child(1) p:nth-child(3),
+#s2:checked ~ .list .item:nth-child(2) p:nth-child(3),
+#s3:checked ~ .list .item:nth-child(3) p:nth-child(3),
+#s4:checked ~ .list .item:nth-child(4) p:nth-child(3),
+#s5:checked ~ .list .item:nth-child(5) p:nth-child(3){
+  animation-duration: 1.3s;
+}
+/* ==== FIX: mostrar el texto del Slide 1 aunque tenga .active ==== */
+#s1:checked ~ .list .item:nth-child(1) p:nth-child(1),
+#s1:checked ~ .list .item:nth-child(1) h2,
+#s1:checked ~ .list .item:nth-child(1) p:nth-child(3){
+  /* reactivar la animación y aparición del texto */
+  transform: translateY(30px) !important;
+  filter: blur(20px) !important;
+  opacity: 0 !important;
+  animation: showContent .5s .7s ease-in-out 1 forwards !important;
+}
+
+/* mismos delays que ya usas */
+#s1:checked ~ .list .item:nth-child(1) h2{
+  animation-delay: 1s !important;
+}
+#s1:checked ~ .list .item:nth-child(1) p:nth-child(3){
+  animation-duration: 1.3s !important;
+}
+/* ===== FIX FINAL: texto y animación del SLIDE 1 al cargar ===== */
+
+/* Re-define keyframes con estado inicial explícito (arranque fiable) */
+@keyframes showContent {
+  from {
+    transform: translateY(30px);
+    filter: blur(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    filter: blur(0);
+    opacity: 1;
+  }
+}
+
+/* Asegura visibilidad del slide 1 seleccionado (por si alguna regla lo pisa) */
+#s1:checked ~ .list .item:nth-child(1){
+  opacity: 1 !important;
+  z-index: 10 !important;
+}
+
+/* Estado inicial + animación para TODOS los hijos del caption del slide 1 */
+#s1:checked ~ .list .item:nth-child(1) .content > *{
+  will-change: transform, filter, opacity;
+  transform: translateY(30px) !important;
+  filter: blur(20px) !important;
+  opacity: 0 !important;
+  animation: showContent .55s .45s ease-in-out 1 forwards !important;
+}
+
+/* Misma lógica de delays que usas */
+#s1:checked ~ .list .item:nth-child(1) h2{
+  animation-delay: 1s !important;
+}
+#s1:checked ~ .list .item:nth-child(1) .content > p:last-of-type{
+  animation-duration: 1.3s !important;
+}
